@@ -105,5 +105,5 @@ jobs:
 
       - name: Smoke test CLI (Windows)
         if: runner.os == 'Windows'
-        shell: bash
+        shell: bash -el {0}
         run: ./build/archlint-cpp.exe --version
