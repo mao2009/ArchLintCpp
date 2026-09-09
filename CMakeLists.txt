@@ -49,6 +49,7 @@ target_link_libraries(archlint_core
 
 add_executable(archlint-cpp src/main.cpp)
 target_link_libraries(archlint-cpp PRIVATE archlint_core)
+target_compile_definitions(archlint-cpp PRIVATE ARCHLINT_VERSION="${PROJECT_VERSION}")
 
 include(CTest)
 if(BUILD_TESTING)
