@@ -11,7 +11,7 @@ The release workflow publishes:
 | Linux | x86_64 | `ubuntu-24.04` | `ArchLintCpp-vX.Y.Z-linux-x86_64.tar.gz` |
 | Linux | arm64 | `ubuntu-24.04-arm` | `ArchLintCpp-vX.Y.Z-linux-arm64.tar.gz` |
 | macOS | arm64 | `macos-15` | `ArchLintCpp-vX.Y.Z-macos-arm64.tar.gz` |
-| macOS | x86_64 | `macos-13` | `ArchLintCpp-vX.Y.Z-macos-x86_64.tar.gz` |
+| macOS | x86_64 | `macos-15-intel` | `ArchLintCpp-vX.Y.Z-macos-x86_64.tar.gz` |
 | Windows | x86_64 | `windows-2022` | `ArchLintCpp-vX.Y.Z-windows-x86_64.zip` |
 
 Linux and macOS archives are `.tar.gz`; the Windows archive is `.zip` (matching platform convention). Every archive is accompanied by a SHA-256 checksum file (`<archive>.sha256`).

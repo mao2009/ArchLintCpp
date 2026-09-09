@@ -6,6 +6,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+# Must be included before find_package(LLVM): LLVM's bundled Findzstd.cmake
+# references CMAKE_INSTALL_LIBDIR, and errors on newer CMake if it is unset
+# (https://github.com/llvm/llvm-project/issues/83802).
+include(GNUInstallDirs)
+
 find_package(LLVM REQUIRED CONFIG)
 find_package(Clang REQUIRED CONFIG)
 
