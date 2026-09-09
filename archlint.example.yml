@@ -1,0 +1,16 @@
+layers:
+  - name: Domain
+    namespaces:
+      - example::domain
+  - name: Infrastructure
+    namespaces:
+      - example::infra
+  - name: Cli
+    paths:
+      - /src/cli/
+
+rules:
+  - from: Domain
+    must_not_depend_on:
+      - Infrastructure
+      - Cli
