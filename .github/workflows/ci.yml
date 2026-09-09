@@ -9,41 +9,63 @@ permissions:
   contents: read
 
 jobs:
-  linux:
-    runs-on: ubuntu-24.04
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-24.04
+            name: linux-x86_64
+          - os: ubuntu-24.04-arm
+            name: linux-arm64
+          - os: macos-15
+            name: macos-arm64
+          - os: macos-15-intel
+            name: macos-x86_64
+          - os: windows-2022
+            name: windows-x86_64
+    runs-on: ${{ matrix.os }}
+    name: ${{ matrix.name }}
+
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install LLVM and Clang 18
+      - name: Install LLVM and Clang 18 (Linux)
+        if: runner.os == 'Linux'
         run: |
           sudo apt-get update
           sudo apt-get install -y llvm-18-dev libclang-18-dev clang-18 ninja-build
 
-      - name: Configure
+      - name: Install LLVM and Clang 18 (macOS)
+        if: runner.os == 'macOS'
+        run: brew install llvm@18 ninja
+
+      - name: Install LLVM and Clang 18 (Windows)
+        if: runner.os == 'Windows'
+        uses: mamba-org/setup-micromamba@v3
+        with:
+          environment-name: llvm18
+          create-args: >-
+            llvmdev=18.1.8
+            clangdev=18.1.8
+            ninja
+            zlib
+            libxml2
+
+      - name: Set up MSVC (Windows)
+        if: runner.os == 'Windows'
+        uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Configure (Linux)
+        if: runner.os == 'Linux'
         run: |
           cmake -S . -B build -G Ninja \
             -DLLVM_DIR=/usr/lib/llvm-18/lib/cmake/llvm \
             -DClang_DIR=/usr/lib/llvm-18/lib/cmake/clang \
             -DCMAKE_BUILD_TYPE=Release
 
-      - name: Build
-        run: cmake --build build --parallel
-
-      - name: Test
-        run: ctest --test-dir build --output-on-failure
-
-      - name: Smoke test CLI
-        run: ./build/archlint-cpp --version
-
-  macos:
-    runs-on: macos-15
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Install LLVM 18 and Ninja
-        run: brew install llvm@18 ninja
-
-      - name: Configure
+      - name: Configure (macOS)
+        if: runner.os == 'macOS'
         shell: bash
         run: |
           prefix="$(brew --prefix llvm@18)"
@@ -56,11 +78,32 @@ jobs:
             -DCMAKE_OSX_SYSROOT="$sdkroot" \
             -DCMAKE_BUILD_TYPE=Release
 
+      - name: Configure (Windows)
+        if: runner.os == 'Windows'
+        shell: bash -el {0}
+        run: |
+          cmake -S . -B build -G Ninja \
+            -DCMAKE_PREFIX_PATH="$CONDA_PREFIX/Library" \
+            -DLLVM_DIR="$CONDA_PREFIX/Library/lib/cmake/llvm" \
+            -DClang_DIR="$CONDA_PREFIX/Library/lib/cmake/clang" \
+            -DCMAKE_C_COMPILER=cl \
+            -DCMAKE_CXX_COMPILER=cl \
+            -DCMAKE_BUILD_TYPE=Release
+
       - name: Build
+        shell: bash
         run: cmake --build build --parallel
 
       - name: Test
+        shell: bash
         run: ctest --test-dir build --output-on-failure
 
-      - name: Smoke test CLI
+      - name: Smoke test CLI (Linux/macOS)
+        if: runner.os != 'Windows'
+        shell: bash
         run: ./build/archlint-cpp --version
+
+      - name: Smoke test CLI (Windows)
+        if: runner.os == 'Windows'
+        shell: bash -el {0}
+        run: ./build/archlint-cpp.exe --version

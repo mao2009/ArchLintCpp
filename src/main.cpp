@@ -44,7 +44,7 @@ int main(int argc, char** argv) {
 
     llvm::cl::HideUnrelatedOptions(category);
     llvm::cl::SetVersionPrinter([](llvm::raw_ostream& os) {
-        os << "ArchLintCpp 0.1.0\n";
+        os << "ArchLintCpp " ARCHLINT_VERSION "\n";
     });
     llvm::cl::ParseCommandLineOptions(argc, argv, "C++ architecture dependency linter\n");
 
