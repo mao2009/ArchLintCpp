@@ -47,10 +47,13 @@ jobs:
         shell: bash
         run: |
           prefix="$(brew --prefix llvm@18)"
+          sdkroot="$(xcrun --sdk macosx --show-sdk-path)"
           cmake -S . -B build -G Ninja \
             -DLLVM_DIR="$prefix/lib/cmake/llvm" \
             -DClang_DIR="$prefix/lib/cmake/clang" \
+            -DCMAKE_C_COMPILER="$prefix/bin/clang" \
             -DCMAKE_CXX_COMPILER="$prefix/bin/clang++" \
+            -DCMAKE_OSX_SYSROOT="$sdkroot" \
             -DCMAKE_BUILD_TYPE=Release
 
       - name: Build
