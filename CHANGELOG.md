@@ -4,7 +4,7 @@ All notable changes to ArchLintCpp will be documented in this file.
 
 The format is based on Keep a Changelog, and this project follows Semantic Versioning.
 
-## [Unreleased]
+## [0.1.1] - TBD
 
 ### Added
 - Linux arm64, macOS x86_64, and Windows x86_64 CI and release coverage.
