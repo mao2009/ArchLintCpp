@@ -1,6 +1,9 @@
+#include "archlint/Config.hpp"
 #include "archlint/RuleEngine.hpp"
 
+#include <cstdio>
 #include <cstdlib>
+#include <fstream>
 #include <iostream>
 
 namespace {
@@ -25,9 +28,44 @@ archlint::Config makeConfig() {
     };
 }
 
+void testConfigLoading() {
+    const char* path = "archlint-config-test.yml";
+    {
+        std::ofstream output(path);
+        output << R"(layers:
+  - name: Domain
+    namespaces:
+      - example::domain
+  - name: Infrastructure
+    paths:
+      - /src/infra/
+rules:
+  - from: Domain
+    must_not_depend_on:
+      - Infrastructure
+)";
+    }
+
+    std::string error;
+    const auto config = archlint::loadConfig(path, error);
+    std::remove(path);
+
+    require(config.has_value(), "valid YAML configuration should load");
+    require(error.empty(), "valid YAML configuration should not return an error");
+    require(config->layers.size() == 2, "configuration should preserve layers");
+    require(config->layers[0].name == "Domain", "configuration should preserve layer names");
+    require(config->layers[0].namespaces.size() == 1,
+            "configuration should preserve namespace mappings");
+    require(config->rules.size() == 1, "configuration should preserve rules");
+    require(config->rules[0].must_not_depend_on.size() == 1,
+            "configuration should preserve forbidden dependencies");
+}
+
 } // namespace
 
 int main() {
+    testConfigLoading();
+
     const archlint::RuleEngine engine(makeConfig());
 
     require(engine.componentFor("example::domain::model", "") == "Domain",
@@ -61,6 +99,6 @@ int main() {
     require(diagnostics[0].target_component == "Infrastructure", "target component should be Infrastructure");
     require(diagnostics[0].location.line == 42, "diagnostic should preserve source location");
 
-    std::cout << "All RuleEngine tests passed\n";
+    std::cout << "All ArchLintCpp tests passed\n";
     return 0;
 }

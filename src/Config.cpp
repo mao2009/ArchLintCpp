@@ -49,9 +49,10 @@ std::optional<Config> loadConfig(const std::string& path, std::string& error) {
 
     std::ostringstream buffer;
     buffer << input.rdbuf();
+    const std::string yamlText = buffer.str();
 
     Config config;
-    llvm::yaml::Input yaml(buffer.str());
+    llvm::yaml::Input yaml(yamlText);
     yaml >> config;
     if (std::error_code ec = yaml.error()) {
         error = "invalid configuration: " + ec.message();
