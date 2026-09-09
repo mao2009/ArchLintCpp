@@ -83,6 +83,7 @@ jobs:
         shell: bash -el {0}
         run: |
           cmake -S . -B build -G Ninja \
+            -DCMAKE_PREFIX_PATH="$CONDA_PREFIX/Library" \
             -DLLVM_DIR="$CONDA_PREFIX/Library/lib/cmake/llvm" \
             -DClang_DIR="$CONDA_PREFIX/Library/lib/cmake/clang" \
             -DCMAKE_C_COMPILER=cl \
