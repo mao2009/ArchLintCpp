@@ -49,6 +49,8 @@ jobs:
             llvmdev=18.1.8
             clangdev=18.1.8
             ninja
+            zlib
+            libxml2
 
       - name: Set up MSVC (Windows)
         if: runner.os == 'Windows'
