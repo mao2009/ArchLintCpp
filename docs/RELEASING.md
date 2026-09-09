@@ -33,6 +33,8 @@ cmake -S . -B build -G Ninja \
 
 The project itself is built with MSVC (`cl.exe`, set up via [`ilammy/msvc-dev-cmd`](https://github.com/ilammy/msvc-dev-cmd)), matching the MSVC ABI that conda-forge's Windows LLVM/Clang packages are built with — this avoids mixing incompatible C++ ABIs the way AppleClang/Homebrew-Clang would on macOS.
 
+`archlint-cpp.exe` dynamically links `zlib.dll` and `zstd.dll` from the conda-forge toolchain (verified with `objdump -p`), so the release workflow copies both into the archive next to the executable and then extracts the packaged archive into a clean directory and runs it with a minimal `PATH` (no conda/MSVC environment) before uploading, to catch a missing-DLL regression before it reaches users. The Windows binary otherwise depends only on the standard Windows system DLLs and the Microsoft Visual C++ Redistributable (`MSVCP140.dll`/`VCRUNTIME140*.dll`) — already present on virtually all Windows systems, and preinstalled on the GitHub-hosted runner used to build it.
+
 ### Deferred targets
 
 **Windows arm64** is intentionally deferred and not part of the release matrix.

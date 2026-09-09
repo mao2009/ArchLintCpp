@@ -100,6 +100,15 @@ jobs:
           ctest --test-dir build --output-on-failure
           cmake --install build
 
+      - name: Bundle runtime DLLs (Windows)
+        if: runner.os == 'Windows'
+        shell: bash -el {0}
+        run: |
+          # archlint-cpp.exe dynamically links zlib.dll/zstd.dll from the
+          # conda-forge LLVM toolchain; bundle them so the archive is
+          # self-contained on a machine without that environment.
+          cp "$CONDA_PREFIX/Library/bin/zlib.dll" "$CONDA_PREFIX/Library/bin/zstd.dll" stage/bin/
+
       - name: Package (Linux/macOS)
         if: runner.os != 'Windows'
         shell: bash
@@ -121,6 +130,17 @@ jobs:
           Compress-Archive -Path "stage\*" -DestinationPath $archive
           (Get-FileHash -Algorithm SHA256 $archive).Hash.ToLower() + "  " + $archive | Set-Content -NoNewline -Path "$archive.sha256"
           Add-Content -Path $env:GITHUB_ENV -Value "ARCHIVE=$archive"
+
+      - name: Verify packaged artifact runs standalone (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          # Extract into a clean directory and run it with a minimal PATH
+          # (no conda/MSVC env) to catch missing-DLL regressions before
+          # the archive is uploaded.
+          Expand-Archive -Path "${{ env.ARCHIVE }}" -DestinationPath verify
+          $env:PATH = "C:\Windows\System32;C:\Windows"
+          & ".\verify\bin\archlint-cpp.exe" --version
 
       - uses: actions/upload-artifact@v4
         with:
