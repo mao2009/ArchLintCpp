@@ -6,6 +6,14 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 
 ## [Unreleased]
 
+### Added
+- Linux arm64, macOS x86_64, and Windows x86_64 CI and release coverage.
+- Windows LLVM/Clang 18 toolchain via conda-forge (`llvmdev`/`clangdev` 18.1.8) and MSVC.
+- `workflow_dispatch` trigger on the `Release` workflow for verifying the full artifact matrix without publishing.
+
+### Notes
+- Windows arm64 remains intentionally deferred; see `docs/RELEASING.md`.
+
 ## [0.1.0] - 2026-09-09
 
 ### Added

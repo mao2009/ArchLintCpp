@@ -12,7 +12,7 @@ It analyzes a project's Clang compilation database, extracts dependencies from t
 - Stable `ARCH001` diagnostics with source locations
 - Human-readable and JSON output
 - CMake/CTest build and test workflow
-- GitHub Actions CI
+- GitHub Actions CI and release artifacts for Linux (x86_64/arm64), macOS (arm64/x86_64), and Windows (x86_64) — see [docs/RELEASING.md](docs/RELEASING.md)
 
 ## Architecture
 
