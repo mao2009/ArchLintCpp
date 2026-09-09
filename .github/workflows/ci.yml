@@ -45,7 +45,6 @@ jobs:
         uses: mamba-org/setup-micromamba@v3
         with:
           environment-name: llvm18
-          channels: conda-forge
           create-args: >-
             llvmdev=18.1.8
             clangdev=18.1.8
@@ -79,7 +78,7 @@ jobs:
 
       - name: Configure (Windows)
         if: runner.os == 'Windows'
-        shell: bash
+        shell: bash -el {0}
         run: |
           cmake -S . -B build -G Ninja \
             -DLLVM_DIR="$CONDA_PREFIX/Library/lib/cmake/llvm" \
