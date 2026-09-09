@@ -1,0 +1,39 @@
+# CMake
+/build/
+/cmake-build-*/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+CTestTestfile.cmake
+Makefile
+compile_commands.json
+
+# Build outputs
+*.o
+*.obj
+*.a
+*.lib
+*.so
+*.dylib
+*.dll
+*.exe
+*.out
+
+# IDEs / editors
+.vscode/
+.idea/
+.vs/
+*.user
+*.suo
+
+# OS metadata
+.DS_Store
+Thumbs.db
+
+# Test / coverage artifacts
+Testing/
+coverage/
+*.gcda
+*.gcno
+*.profraw
+*.profdata
